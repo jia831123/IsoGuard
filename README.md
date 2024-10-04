@@ -63,6 +63,5 @@ Contributions to this project are welcome. Please follow these steps:
 
 ## Contact Information
 
-[Your Name] - [your.email@example.com]
+[William] - [like60955@gmail.com]
 
-Project Link: [https://github.com/yourusername/your-repo-name](https://github.com/yourusername/your-repo-name)

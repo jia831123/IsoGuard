@@ -95,7 +95,8 @@
 /* 新增自定義按鈕樣式 */
 .custom-buttons {
   position: fixed;
-  left: 30px; /* 與縮放控制按鈕對齊 */
+  left: 34px;
+    /* 與縮放控制按鈕對齊 */
   top: 140px; /* 增加頂部距離，為縮放控制留出更多空間 */
   display: flex;
   flex-direction: column; /* 改為垂直排列 */
@@ -208,4 +209,23 @@
 /* 調整縮放控制按鈕的位置，使其與新按鈕對齊 */
 .leaflet-control-zoom {
   top: 20px !important;
+}
+
+/* 在文件末尾添加以下樣式 */
+
+.basemap-popover {
+  display: none;
+  opacity: 0;
+  visibility: hidden;
+}
+
+.custom-button-container:hover .basemap-popover {
+  display: flex;
+  opacity: 1;
+  visibility: visible;
+}
+
+.basemap-popover .popover-button.active {
+  background-color: rgba(0, 0, 0, 0.1);
+  transform: scale(1.1);
 }

@@ -36,8 +36,33 @@ export const iconConfig = {
   ],
   [ButtonKeys.DisasterPotential]: [
     { icon: faWater, title: "土石流潛勢溪流", action: async() => {
+      function debridFlowStyle(feature: { properties: { Potential: string } }) {
+        const potentialColorMap: Record<string, string> = {
+          '高': 'red',
+          '中': 'yellow',
+          '低': 'green'
+        };
+
+        const getColor = (potential: string) => potentialColorMap[potential] || 'orange';
+
+        return {
+          fillColor: getColor(feature?.properties?.Potential),
+          weight: 1,
+          opacity: 1,
+          color: getColor(feature?.properties?.Potential),
+          dashArray: '0',
+          fillOpacity: 0.4,
+        }
+      }
       const data = await useDebridRiver()
-      return  L.geoJSON(data as GeoJsonObject)
+      return data ? L.geoJSON(data as GeoJsonObject, {
+        style: (feature) => {
+          if (feature && feature.properties) {
+            return debridFlowStyle(feature as { properties: { Potential: string } });
+          }
+          return {};
+        }
+      }) : null
      } },
     { icon: faMountain, title: "土石流潛勢範圍", action: () => { /* 實現土石流潛勢範圍功能 */ } },
     { icon: faHouseCircleExclamation, title: "曾發生災害孤島的村里", action: () => { /* 實現曾發生災害孤島的村里功能 */ } }

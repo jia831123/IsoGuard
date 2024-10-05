@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import './App.css'
 import { MapContainer, TileLayer, ZoomControl, Marker, useMap } from 'react-leaflet'
 import 'leaflet/dist/leaflet.css'
@@ -28,9 +28,17 @@ import {
   faWind,               // IDW算法
   faDrawPolygon,        // TIN算法
   faClockRotateLeft,    // 未來以小時預測雨量
+  faMap, faSatellite, faMapMarkedAlt
 } from '@fortawesome/free-solid-svg-icons'
 import { ButtonKeys } from './enums/ButtonKeys'
 import { useMapOperations } from './hooks/useMapOperations'
+
+function latLngToTile(lat: number, lng: number, zoom: number): { x: number, y: number } {
+  const n = Math.pow(2, zoom);
+  const x = Math.floor((lng + 180) / 360 * n);
+  const y = Math.floor((1 - Math.log(Math.tan(lat * Math.PI / 180) + 1 / Math.cos(lat * Math.PI / 180)) / Math.PI) / 2 * n);
+  return { x, y };
+}
 
 // 修復 Leaflet 默認圖標問題
 delete (L.Icon.Default.prototype as any)._getIconUrl
@@ -74,23 +82,41 @@ const icons = [
   faLandmark           // 歷史災害
 ]
 
-// 定義底圖選項
+// 修改底圖選項定義
 const basemaps = [
   {
     name: 'OpenStreetMap',
     url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+    icon: faMap,
+    getThumbnail: () => {
+      const zoom = 7;
+      const { x, y } = latLngToTile(24, 120.6856, zoom);  // 台北市中心
+      return `https://a.tile.openstreetmap.org/${zoom}/${x}/${y}.png`;
+    }
   },
   {
     name: 'Satellite',
     url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
-    attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
+    attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community',
+    icon: faSatellite,
+    getThumbnail: () => {
+      const zoom = 7;
+      const { x, y } = latLngToTile(23.9037, 120.6856, zoom);  // 台北市中心
+      return `https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/${zoom}/${y}/${x}`;
+    }
   },
   {
-    name: 'Terrain',
-    url: 'https://stamen-tiles-{s}.a.ssl.fastly.net/terrain/{z}/{x}/{y}{r}.png',
-    attribution: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-  }
+    name: 'Nlsc',
+    url: 'http://wmts.nlsc.gov.tw/wmts/PHOTO2/default/EPSG:3857/{z}/{y}/{x}',
+    attribution: '內政部國土測繪中心',
+    icon: faMapMarkedAlt,
+    getThumbnail: () => {
+      const zoom = 7;
+      const { x, y } = latLngToTile(23.9037, 120.6856, zoom);  // 台北市中心
+      return `http://wmts.nlsc.gov.tw/wmts/PHOTO2/default/EPSG:3857/${zoom}/${y}/${x}`;
+    }
+  },
 ]
 
 // 新增這個組件來更新地圖視圖
@@ -133,7 +159,7 @@ const disasterPotentialSubIcons = [
   { icon: faHouseCircleExclamation, title: "曾發生災害孤島的村里" }
 ]
 
-// 定義孤島災害相關的子圖標
+// 定義孤島災害相關的圖標
 const isolatedDisasterSubIcons = [
   { icon: faShieldHalved, title: "韌性力指標" },
   { icon: faGlassWaterDroplet, title: "脆弱度指標" },
@@ -147,12 +173,17 @@ const rainfallAnalysisSubIcons = [
   { icon: faClockRotateLeft, title: "未來以小時預測雨量" }
 ]
 
+
+
 function App() {
-  const [center, setCenter] = useState<[number, number]>([25.0330, 121.5654]) // 初始值設為台北市中心
+  // 將初始中心點設置為南投市
+  const [center, setCenter] = useState<[number, number]>([23.9037, 120.6856]) // 初始值設為南投市中心
   const [currentBasemap, setCurrentBasemap] = useState(0)
   const [showLocation, setShowLocation] = useState(false)
   const [activeButtons, setActiveButtons] = useState<{ [key: string]: boolean }>({});
   const mapRef = useRef<L.Map | null>(null);
+  // 將縮略圖中心點也設置為南投市
+  const [thumbnailCenter, setThumbnailCenter] = useState<[number, number]>([23.9037, 120.6856]);
 
   useEffect(() => {
     // 在組件加載時獲取用戶位置
@@ -161,6 +192,7 @@ function App() {
         (position) => {
           const newCenter: [number, number] = [position.coords.latitude, position.coords.longitude];
           setCenter(newCenter);
+          setThumbnailCenter(newCenter); // 更新縮略圖中心點
           // 使用 mapRef 來更新地圖視圖
           if (mapRef.current) {
             mapRef.current.setView(newCenter, mapRef.current.getZoom());
@@ -168,7 +200,7 @@ function App() {
         },
         (error) => {
           console.error("Error getting user location:", error);
-          // 如果無法獲取位置，保持默認中心點
+          // 如果無法獲取位置，保持南投市作為中心點
         }
       );
     } else {
@@ -176,9 +208,17 @@ function App() {
     }
   }, []);
 
-  const changeBasemap = () => {
-    setCurrentBasemap((prev) => (prev + 1) % basemaps.length)
-  }
+  useEffect(() => {
+    if (mapRef.current) {
+      const map = mapRef.current;
+      map.on('moveend', () => {
+        const center = map.getCenter();
+        setThumbnailCenter([center.lat, center.lng]);
+      });
+    }
+  }, [mapRef]);
+
+
 
   const { handleSubButtonClick: handleSubClick } = useMapOperations(mapRef)
 
@@ -197,18 +237,35 @@ function App() {
     handleSubClick(buttonKey, subIndex)
   };
 
+  const handleBasemapChange = useCallback((index: number) => {
+    setCurrentBasemap(index);
+    setActiveButtons(prev => ({
+      ...prev,
+      [`${ButtonKeys.Basemap}-${index}`]: true
+    }));
+  }, []);
+
+  const basemapsWithDynamicThumbnails = basemaps.map(basemap => ({
+    ...basemap,
+    getThumbnail: () => {
+      const zoom = 7;
+      const { x, y } = latLngToTile(thumbnailCenter[0], thumbnailCenter[1], zoom);
+      return basemap.getThumbnail().replace('{z}', zoom.toString()).replace('{x}', x.toString()).replace('{y}', y.toString());
+    }
+  }));
+
   return (
     <div className="app-container">
       <MapContainer
         center={center}
-        zoom={13}
+        zoom={13} // 你可能想要調整這個初始縮放級別
         className="map-container custom-map"
         zoomControl={false}
         ref={mapRef}
       >
         <TileLayer
-          url={basemaps[currentBasemap].url}
-          attribution={basemaps[currentBasemap].attribution}
+          url={basemapsWithDynamicThumbnails[currentBasemap].url}
+          attribution={basemapsWithDynamicThumbnails[currentBasemap].attribution}
         />
         {showLocation && <LocationMarker />}
         <MapUpdater center={center} />
@@ -219,11 +276,28 @@ function App() {
               <div key={index} className="custom-button-container">
                 <button
                   className="custom-button"
-                  onClick={index === 0 ? handleLocationClick : index === 1 ? changeBasemap : undefined}
-                  title={index === 0 ? "Show current location" : index === 1 ? `Change basemap (Current: ${basemaps[currentBasemap].name})` : undefined}
+                  onClick={index === 0 ? handleLocationClick : undefined}
+                  title={index === 0 ? "Show current location" : index === 1 ? "Change basemap" : undefined}
                 >
                   <FontAwesomeIcon icon={icon} />
                 </button>
+                {index === 1 && (
+                  <div className="popover basemap-popover">
+                    {basemapsWithDynamicThumbnails.map((basemap, subIndex) => (
+                      <button
+                        key={subIndex}
+                        className={`popover-button basemap-button ${currentBasemap === subIndex ? 'active' : ''}`}
+                        title={basemap.name}
+                        onClick={() => handleBasemapChange(subIndex)}
+                      >
+                        <div className="basemap-thumbnail-container">
+                          <img src={basemap.getThumbnail()} alt={basemap.name} className="basemap-thumbnail" />
+                          <span className="basemap-name">{basemap.name}</span>
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                )}
                 {index === 2 && (
                   <div className="popover">
                     {weatherSubIcons.map((subIcon, subIndex) => (

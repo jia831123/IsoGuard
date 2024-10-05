@@ -1,11 +1,7 @@
 export enum ButtonKeys {
-  Weather = 'weather',
-  DisasterPotential = 'disaster-potential',
-  IsolatedDisaster = 'isolated-disaster',
-  RainfallAnalysis = 'rainfall-analysis',
-  Traffic = 'traffic',
-  MathModel = 'math-model',
-  MachineLearning = 'machine-learning',
-  DisasterPrediction = 'disaster-prediction',
-  HistoricalDisaster = 'historical-disaster'
+  Weather = 'Weather',
+  DisasterPotential = 'DisasterPotential',
+  IsolatedDisaster = 'IsolatedDisaster',
+  RainfallAnalysis = 'RainfallAnalysis',
+  Basemap = 'Basemap'  // 確保這行存在
 }

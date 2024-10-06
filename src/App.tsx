@@ -21,17 +21,26 @@ import {
   faTint,                 // 雨量站
   faWater,              // 土石流潛勢溪流
   faMountain,           // 土石流潛勢範圍
-  faHouseCircleExclamation, // 曾發生災害孤島的村里
   faShieldHalved,       // 韌性力指標
   faGlassWaterDroplet,  // 脆弱度指標
   faScaleBalanced,      // 綜合指標
   faWind,               // IDW算法
   faDrawPolygon,        // TIN算法
   faClockRotateLeft,    // 未來以小時預測雨量
-  faMap, faSatellite, faMapMarkedAlt
+  faMap, faSatellite, faMapMarkedAlt,
+  faExclamationTriangle,  // CAP
+  faRoad,                 // 道路中斷點
+  faHouseCircleExclamation, // 孤島發生村里
 } from '@fortawesome/free-solid-svg-icons'
 import { ButtonKeys } from './enums/ButtonKeys'
 import { useMapOperations } from './hooks/useMapOperations'
+import { library } from '@fortawesome/fontawesome-svg-core'
+import { fas } from '@fortawesome/free-solid-svg-icons'
+import '@fortawesome/fontawesome-svg-core/styles.css'
+import 'leaflet.markercluster/dist/MarkerCluster.css'
+import 'leaflet.markercluster/dist/MarkerCluster.Default.css'
+
+library.add(fas)
 
 function latLngToTile(lat: number, lng: number, zoom: number): { x: number, y: number } {
   const n = Math.pow(2, zoom);
@@ -173,6 +182,13 @@ const rainfallAnalysisSubIcons = [
   { icon: faClockRotateLeft, title: "未來以小時預測雨量" }
 ]
 
+// 定義交通相關的子圖標
+const trafficSubIcons = [
+  { icon: faExclamationTriangle, title: "CAP" },
+  { icon: faRoad, title: "道路中斷點" },
+  { icon: faHouseCircleExclamation, title: "孤島發生村里" }
+]
+
 
 
 function App() {
@@ -292,8 +308,8 @@ function App() {
                       >
                         <div className="basemap-thumbnail-container">
                           <img src={basemap.getThumbnail()} alt={basemap.name} className="basemap-thumbnail" />
-                          <span className="basemap-name">{basemap.name}</span>
                         </div>
+                        <span className="basemap-name">{basemap.name}</span>
                       </button>
                     ))}
                   </div>
@@ -354,7 +370,21 @@ function App() {
                     ))}
                   </div>
                 )}
-                {index > 5 && (
+                {index === 6 && (
+                  <div className="popover">
+                    {trafficSubIcons.map((subIcon, subIndex) => (
+                      <button
+                        key={subIndex}
+                        className={`popover-button ${activeButtons[`${ButtonKeys.Traffic}-${subIndex}`] ? 'active' : ''}`}
+                        title={subIcon.title}
+                        onClick={() => handleSubButtonClick(ButtonKeys.Traffic, subIndex)}
+                      >
+                        <FontAwesomeIcon icon={subIcon.icon} />
+                      </button>
+                    ))}
+                  </div>
+                )}
+                {index > 6 && (
                   <div className="popover">
                     {[0, 1, 2].map((subIndex) => (
                       <button

@@ -1,6 +1,6 @@
 import { useRef, MutableRefObject } from 'react'
 import L from 'leaflet'
-import { iconConfig } from '../config/iconConfig'
+import { iconConfig } from '../config/iconConfig/index'
 import { ButtonKeys } from '../enums/ButtonKeys'
 import { isAsync } from '@/utils'
 

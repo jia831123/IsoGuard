@@ -3,5 +3,6 @@ export enum ButtonKeys {
   DisasterPotential = 'DisasterPotential',
   IsolatedDisaster = 'IsolatedDisaster',
   RainfallAnalysis = 'RainfallAnalysis',
-  Basemap = 'Basemap'  // 確保這行存在
+  Traffic = 'Traffic',
+  Basemap = 'Basemap'
 }

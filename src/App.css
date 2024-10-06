@@ -108,30 +108,25 @@
   transform: scale(1.1);
 }
 
-/* Popover 式 */
+/* Popover 樣式 */
 .popover {
   position: absolute;
-  left: calc(100% + 20px);
+  left: calc(100% + 15px);
   top: 50%;
-  /* 初始狀態：縮小並垂直居中 */
-    transform: translateY(-50%) scale(0);
-    /* 設置變形的原點為左側中心 */
-    transform-origin: left center;
-    /* 半透明白色背景 */
-    background-color: rgba(255, 255, 255, 0.6);
-    /* 背景模糊效果，增加視覺深度 */
-    backdrop-filter: blur(5px);
-    /* 圓角邊框 */
-    border-radius: 12px;
-    /* 內部填充 */
-    padding: 10px;
+  transform: translateY(-50%) scale(0);
+  transform-origin: left center;
+  background-color: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border-radius: 15px;
+    padding: 12px;
   display: flex;
   flex-direction: column;
-    gap: 10px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  gap: 10px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
   opacity: 0;
   visibility: hidden;
   transition: all 0.3s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+  border: 1px solid rgba(255, 255, 255, 0.3);
 }
 
 .custom-button-container:hover .popover {
@@ -140,16 +135,18 @@
   transform: translateY(-50%) scale(1);
 }
 
-/* 調整小箭頭的位置和動畫 */
+/* 改進箭頭設計 */
 .popover::before {
   content: '';
   position: absolute;
-  left: -10px;
+  left: -8px;
   top: 50%;
-  transform: translateY(-50%);
-  border-top: 10px solid transparent;
-  border-bottom: 10px solid transparent;
-  border-right: 10px solid rgba(255, 255, 255, 0.6);
+  transform: translateY(-50%) rotate(45deg);
+    width: 16px;
+    height: 16px;
+    background-color: rgba(255, 255, 255, 0.1);
+    border-left: 1px solid rgba(255, 255, 255, 0.3);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.3);
   transition: opacity 0.3s ease;
   opacity: 0;
 }
@@ -158,164 +155,103 @@
   opacity: 1;
 }
 
-/* 移除子按鈕的單獨動畫 */
+/* Popover 按鈕樣式 */
 .popover-button {
-  opacity: 1;
-  transform: translateX(0);
-  transition: all 0.3s ease;
-}
-
-/* 移除子按鈕的延遲動畫 */
-.custom-button-container:hover .popover-button:nth-child(1),
-.custom-button-container:hover .popover-button:nth-child(2),
-.custom-button-container:hover .popover-button:nth-child(3) {
-  transition-delay: 0s;
-}
-
-/* Popover 按钮样式 */
-.popover-button {
-  width: 30px;
-  height: 30px;
+  width: 36px;
+    height: 36px;
   border-radius: 50%;
-  background-color: rgba(255, 255, 255, 0.8);
-    /* 稍微增加按鈕的不透明度 */
+  background-color: rgba(255, 255, 255, 0.6);
   border: none;
   color: #333;
-  font-size: 14px;
+  font-size: 16px;
   cursor: pointer;
   transition: all 0.3s ease;
   display: flex;
   justify-content: center;
   align-items: center;
   position: relative;
-    overflow: hidden;
+  overflow: hidden;
 }
 
-/* 添加 hover 效果 */
 .popover-button:hover {
-  background-color: rgba(0, 60, 136, 0.2);
-  /* 稍微調整hover狀態的顏色 */
+  background-color: rgba(0, 60, 136, 0.1);
   color: #003c88;
   transform: scale(1.1);
-  box-shadow: 0 0 8px rgba(0, 60, 136, 0.3);
-}
-
-/* 為 hover 狀態添加發光效果 */
-.popover-button:hover::before {
-  content: '';
-  position: absolute;
-  top: -2px;
-  left: -2px;
-  right: -2px;
-  bottom: -2px;
-  background: linear-gradient(45deg, rgba(0, 60, 136, 0.2), rgba(0, 119, 190, 0.2));
-  border-radius: 50%;
-  z-index: -1;
-  opacity: 0.6;
-  filter: blur(3px);
+  box-shadow: 0 0 10px rgba(0, 60, 136, 0.2);
 }
 
 .popover-button.active {
-  background-color: rgba(0, 60, 136, 0.9);
-  /* 保持動狀態較為明顯 */
+  background-color: rgba(0, 60, 136, 0.8);
   color: white;
   transform: scale(1.1);
-  box-shadow: 0 0 10px rgba(0, 60, 136, 0.5);
-  animation: pulse 2s infinite;
+  box-shadow: 0 0 15px rgba(0, 60, 136, 0.4);
 }
 
-.popover-button.active::before {
-  content: '';
-  position: absolute;
-  top: -2px;
-    left: -2px;
-    right: -2px;
-    bottom: -2px;
-    background: linear-gradient(45deg, #003c88, #0077be);
-    border-radius: 50%;
-  z-index: -1;
-  opacity: 0.6;
-    filter: blur(5px);
+/* 底圖選擇器特殊樣式 */
+.basemap-popover {
+  width: 200px;
+  /* 增加寬度以容納文字 */
+  padding: 10px;
 }
 
-.popover-button.active:hover {
-  background-color: rgba(0, 60, 136, 0.9);
-  transform: scale(1.15);
-}
-
-/* 動畫效果 */
-@keyframes pulse {
-  0% {
-    transform: scale(1.1);
-    box-shadow: 0 0 0 0 rgba(0, 60, 136, 0.7);
-  }
-
-  70% {
-    transform: scale(1.15);
-    box-shadow: 0 0 0 10px rgba(0, 60, 136, 0);
-  }
-
-}
-
-/* 為圖標添加過渡效果 */
-.popover-button .fa-icon {
+.basemap-button {
+  width: 100%;
+  height: auto;
+  padding: 5px;
+  border-radius: 8px;
+  margin-bottom: 8px;
+  background-color: rgba(255, 255, 255, 0.4);
+  overflow: hidden;
   transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
 }
 
-.popover-button:hover .fa-icon {
-  transform: scale(1.2);
+.basemap-button:hover,
+.basemap-button.active {
+  background-color: rgba(0, 60, 136, 0.1);
+  transform: scale(1.05);
 }
+
+.basemap-thumbnail-container {
+  width: 50px;
+  height: 50px;
+  border-radius: 6px;
+  overflow: hidden;
+  margin-right: 10px;
+  flex-shrink: 0;
+}
+
+.basemap-thumbnail {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.basemap-name {
+  font-size: 14px;
+  color: #1b1a1a;
+  background-color: rgb(240, 248, 255, 0.4);
+  border-radius: 10px;
+  flex-grow: 1;
+  text-align: center;
+  z-index: 1;
+}
+
+
 /* 移除舊的 basemap-menu 相關樣式 */
 .basemap-menu,
 .basemap-option {
   display: none;
 }
 
-/* 確保 popover 樣式適用於所有按鈕，包括底圖切換 */
-.popover {
-  /* ... (existing popover styles remain the same) */
-}
-
-.popover-button {
-  /* ... (existing popover-button styles remain the same) */
-}
 
 /* 為底圖切換按鈕添加特殊樣式（如果需要） */
-.popover-button[title^="OpenStreetMap"],
-.popover-button[title^="Satellite"],
-.popover-button[title^="Nlsc"] {
+.popover-button[title="OpenStreetMap"],
+.popover-button[title="Satellite"],
+.popover-button[title="Nlsc"] {
   font-size: 12px;
   /* 可能需要調整字體大小以適應底圖名稱 */
-}
-
-.basemap-popover {
-  width: 150px;
-  padding: 6px;
-}
-
-.basemap-button {
-  width: 100%;
-  height: auto;
-  padding: 3px;
-  /* 添加一些內邊距 */
-  border-radius: 5px;
-  /* 增加邊框半徑 */
-  margin-bottom: 6px;
-  background-color: transparent;
-  overflow: hidden;
-  position: relative;
-  transition: all 0.3s ease;
-  border: 3px solid transparent;
-  /* 添加透明邊框 */
-}
-
-.basemap-thumbnail-container {
-  position: relative;
-  width: 100%;
-  padding-top: 56.25%;
-  overflow: hidden;
-  border-radius: 2px;
-  /* 減小內部容器的邊框半徑 */
 }
 
 .basemap-thumbnail {
@@ -326,26 +262,6 @@
   height: 100%;
   object-fit: cover;
   transition: transform 0.3s ease;
-}
-
-.basemap-name {
-  position: absolute;
-  top: 3px;
-  left: 3px;
-  font-size: 10px;
-  color: #333;
-  /* 改為黑色文字 */
-  background-color: rgba(255, 255, 255, 0.8);
-  /* 改為白色背景，稍微透明 */
-  padding: 2px 4px;
-  /* 稍微增加內邊距 */
-  border-radius: 2px;
-  z-index: 1;
-  transition: background-color 0.3s ease, color 0.3s ease;
-}
-
-.basemap-button:hover .basemap-thumbnail {
-  transform: scale(1.05);
 }
 
 .basemap-button.active {
@@ -363,4 +279,297 @@
   /* 懸停和活動狀態下，文字變為深藍色 */
 }
 
-/* ... (rest of the styles remain the same) */
+/* 雨量站 Popup 樣式 */
+.rain-station-popup-container {
+  background-color: rgba(255, 255, 255, 0.9);
+  border-radius: 10px;
+  box-shadow: 0 3px 14px rgba(0, 0, 0, 0.4);
+}
+
+.rain-station-popup-container .leaflet-popup-content-wrapper {
+  background-color: transparent;
+  color: #333;
+  font-size: 14px;
+  line-height: 24px;
+  border-radius: 10px;
+}
+
+.rain-station-popup-container .leaflet-popup-content {
+  margin: 0;
+  padding: 0;
+}
+
+.rain-station-popup-container .leaflet-popup-tip-container {
+  display: none;
+}
+
+.rain-station-popup {
+  padding: 15px;
+}
+
+.rain-station-popup h3 {
+  margin: 0 0 10px 0;
+  color: #003c88;
+  font-size: 18px;
+  font-weight: bold;
+  border-bottom: 2px solid #003c88;
+  padding-bottom: 5px;
+}
+
+.rain-station-info p {
+  margin: 5px 0;
+}
+
+.rain-station-info .rainfall {
+  font-weight: bold;
+  color: #e74c3c;
+}
+
+/* 根據雨量大小改變顏色 */
+.rain-station-info .rainfall.low {
+  color: #2ecc71;
+}
+
+.rain-station-info .rainfall.medium {
+  color: #f39c12;
+}
+
+.rain-station-info .rainfall.high {
+  color: #e74c3c;
+}
+
+/* 自定義聚類圖標樣式 */
+.rainfall-cluster-icon {
+  background-color: rgba(0, 60, 136, 0.7);
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  font-weight: bold;
+  border: 2px solid white;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+}
+
+.rainfall-cluster-icon div {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.3) 0%, rgba(0, 60, 136, 0) 70%);
+}
+
+.rainfall-cluster-icon span {
+  font-size: 14px;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.rainfall-cluster-icon.small {
+  font-size: 12px;
+}
+
+.rainfall-cluster-icon.medium {
+  font-size: 14px;
+}
+
+.rainfall-cluster-icon.large {
+  font-size: 16px;
+}
+
+/* 添加到文件末*/
+
+.debrid-flow-popup h3,
+.debrid-impact-popup h3 {
+  color: #333;
+  margin-bottom: 10px;
+}
+
+.debrid-flow-popup p,
+.debrid-impact-popup p {
+  margin: 5px 0;
+}
+
+.debrid-flow-popup strong,
+.debrid-impact-popup strong {
+  color: #666;
+}
+
+.isolated-village-popup h3 {
+  color: #8B4513;
+  margin-bottom: 10px;
+  border-bottom: 2px solid #8B4513;
+  padding-bottom: 5px;
+}
+
+.isolated-village-popup p {
+  margin: 5px 0;
+}
+
+.isolated-village-popup strong {
+  color: #D2691E;
+}
+
+/* 通用 Popup 樣式 */
+.custom-popup-container {
+  background-color: rgba(255, 255, 255, 0.9);
+  border-radius: 10px;
+  box-shadow: 0 3px 14px rgba(0, 0, 0, 0.4);
+}
+
+
+
+.custom-popup-container .leaflet-popup-content-wrapper {
+  background-color: transparent;
+  color: #333;
+  font-size: 14px;
+  line-height: 24px;
+  border-radius: 10px;
+}
+
+
+
+.custom-popup-container .leaflet-popup-tip-container {
+  display: none;
+}
+
+.custom-popup-container h3 {
+  margin: 0 0 10px 0;
+  color: #003c88;
+  font-size: 18px;
+  font-weight: bold;
+  border-bottom: 2px solid #003c88;
+  padding-bottom: 5px;
+}
+
+.custom-popup-container p {
+  margin: 5px 0;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.custom-popup-container strong {
+  color: #1976d2;
+}
+
+/* 特定類型的 Popup 樣式 */
+.custom-popup-container .severity {
+  font-weight: bold;
+}
+
+.cap-popup .severity.extreme {
+  color: #d32f2f;
+}
+
+.cap-popup .severity.severe {
+  color: #f57c00;
+}
+
+.cap-popup .severity.moderate {
+  color: #fbc02d;
+}
+
+.cap-popup .severity.minor {
+  color: #388e3c;
+}
+
+.isolated-village-popup strong {
+  color: #8B4513;
+}
+
+/* 替換現有的 CAP 標記樣式為以下內容 */
+
+/* CAP 標記樣式 */
+.cap-marker {
+  width: 16px !important;
+  height: 16px !important;
+  border-radius: 50%;
+  position: relative;
+}
+
+.cap-marker>div {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+}
+
+.cap-marker::before,
+.cap-marker::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  animation: ripple 2s linear infinite;
+  pointer-events: none;
+}
+
+.cap-marker::before {
+  animation-delay: 0.5s;
+}
+
+@keyframes ripple {
+  0% {
+    width: 100%;
+    height: 100%;
+    opacity: 1;
+  }
+
+  100% {
+    width: 300%;
+    height: 300%;
+    opacity: 0;
+  }
+}
+
+/* 保留其他的嚴重程度相關樣式 */
+
+.cap-marker.extreme::before,
+.cap-marker.extreme::after {
+  border: 2px solid rgba(211, 47, 47, 0.5);
+}
+
+.cap-marker.severe::before,
+.cap-marker.severe::after {
+  border: 2px solid rgba(245, 124, 0, 0.5);
+}
+
+.cap-marker.moderate::before,
+.cap-marker.moderate::after {
+  border: 2px solid rgba(251, 192, 45, 0.5);
+}
+
+.cap-marker.minor::before,
+.cap-marker.minor::after {
+  border: 2px solid rgba(56, 142, 60, 0.5);
+}
+
+.cap-marker.unknown::before,
+.cap-marker.unknown::after {
+  border: 2px solid rgba(96, 125, 139, 0.5);
+}
+
+/* 保留原有的填充顏色樣式 */
+.cap-marker.extreme {
+  background-color: #d32f2f;
+}
+
+.cap-marker.severe {
+  background-color: #f57c00;
+}
+
+.cap-marker.moderate {
+  background-color: #fbc02d;
+}
+
+.cap-marker.minor {
+  background-color: #388e3c;
+}
+
+.cap-marker.unknown {
+  background-color: #607d8b;
+}
